@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>قريب ليك - ألعاب حقيقية</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma,Arial}
+body{background:#050507;color:#fff;display:flex;justify-content:center}
+.app{width:420px;max-width:100vw;min-height:100vh;background:#0A0A0C;padding-bottom:90px}
+.top{height:52px;display:flex;justify-content:space-between;align-items:center;padding:0 15px;background:#111}
+.badge{background:#00FF94;color:#000;padding:4px 9px;border-radius:20px;font-size:10px;font-weight:900}
+.balance{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;border-radius:20px;padding:16px;margin:15px}
+.balance h1{font-size:32px}
+.btn{width:100%;height:48px;border-radius:12px;border:none;font-weight:900;font-size:14px;cursor:pointer;margin:7px 0}
+.btn-gold{background:#FFD700;color:#000}.btn-green{background:#00FF94;color:#000}.btn-dark{background:#222;color:#fff;border:1px solid #333}
+.card{background:#1a1a1a;border-radius:16px;padding:14px;margin:12px}
+.gamebox{background:#15151c;border:1px solid #2a2a2a;border-radius:16px;padding:14px;margin:12px;display:none}
+.gamebox.active{display:block}
+.bigbtn{width:100%;height:90px;border-radius:16px;border:none;background:linear-gradient(135deg,#FF0055,#7C3AED);color:#fff;font-size:22px;font-weight:900;cursor:pointer}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cell{height:52px;border-radius:10px;background:#222;border:1px solid #333;color:#fff;font-size:20px;cursor:pointer}
+.cell.open{background:#FFD700;color:#000}
+.note{background:#00FF9420;border:1px solid #00FF9450;border-radius:12px;padding:12px;margin:12px;font-size:12px;line-height:1.8}
+.nav{position:fixed;bottom:0;width:420px;max-width:100vw;height:68px;background:#0A0A0C;border-top:1px solid #222;display:flex;justify-content:space-around;align-items:center;z-index:10}
+.nav button{background:none;border:none;color:#fff;font-size:11px;opacity:.6}.nav button.active{opacity:1;color:#FFD700}
+#msg{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#00FF94;color:#000;padding:10px 16px;border-radius:20px;font-weight:900;display:none;z-index:99}
+input{width:100%;height:46px;border-radius:12px;border:1px solid #333;background:#111;color:#fff;text-align:center;font-size:18px;margin:8px 0}
+</style></head>
+<body><div id="msg"></div><div class="app">
+<div class="top"><b>قريب ليك</b><span class="badge">ألعاب حقيقية</span></div>
+<div class="balance"><p>عملاتك • محفوظة في هاتفك</p><h1 id="bal">0 عملة</h1><p id="lvl">مستوى 1</p></div>
+<div style="margin:12px">
+<button class="btn btn-gold" onclick="daily()">🎁 مكافأة يومية +10</button>
+<button class="btn btn-green" onclick="openGame('g1')">🐭 1 - تحدي النقر - العب بصح</button>
+<button class="btn btn-dark" onclick="openGame('g2')">🔢 2 - خمّن الرقم - بلا حظ كاذب</button>
+<button class="btn btn-dark" onclick="openGame('g3')">🧮 3 - تحدي الحساب - 30 ثانية</button>
+<button class="btn btn-dark" onclick="openGame('g4')">🧠 4 - لعبة الذاكرة</button>
+</div>
+
+<div id="g1" class="gamebox"><h3>🐭 تحدي النقر</h3><p id="g1info">ورك على الزر أكبر عدد ممكن في 10 ثواني!</p><button class="bigbtn" id="g1btn" onclick="clickGame()">إضغط هنا!</button><p id="g1score" style="text-align:center;margin-top:10px">النقرات: 0 | الوقت: 10</p><button class="btn btn-gold" onclick="startClick()">▶️ بدا اللعبة</button></div>
+
+<div id="g2" class="gamebox"><h3>🔢 خمّن الرقم</h3><p>خمّنت رقم من 1 حتى 20، عندك 3 محاولات.</p><p id="g2hint">...</p><input id="g2input" type="number" placeholder="كتب الرقم هنا"><button class="btn btn-green" onclick="guessGame()">جرّب</button><p id="g2left">المحاولات: 3</p></div>
+
+<div id="g3" class="gamebox"><h3>🧮 تحدي الحساب</h3><p id="g3q">...</p><input id="g3input" type="number" placeholder="الجواب"><button class="btn btn-green" onclick="mathGame()">جاوب</button><p id="g3score">صحيحة: 0 | خاطئة: 0</p></div>
+
+<div id="g4" class="gamebox"><h3>🧠 الذاكرة</h3><p>لقا كل جوج بحال بحال.</p><div class="grid4" id="mem"></div><p id="memscore">المحاولات: 0</p><button class="btn btn-gold" onclick="initMem()">🔄 لعبة جديدة</button></div>
+
+<div class="note"><b>علاش الناس غادي يلعبو بلا فلوس؟</b><br>• حيت اللعب ممتع، والتحدي، والمستويات، والمنافسة مع صحابهم.<br>• بحال Subway Surfers و Candy Crush: حتى واحد ما كيربح فلوس، ولكن الملايين كيلعبو.<br><b>وانتا شنو غتربح ملي ينزلوها؟</b><br>• ملي يكون عندك بزاف ديال اللعابة، الشركات كتخلصك على الإشهار اللي كيشوفوه (AdMob الحقيقي ملي تنشرو في Play).<br>• تقدر تبيع سكنات ومستويات خاصة داخل اللعبة.<br>• تقدر تحط رابط المحل ديالك ديال الأحجار الكريمة، واللعابة كيشوفوه.<br>• يعني انتا كتربح من الإشهار والمتجر، ماشي من أن الناس يخسرو فلوسهم.</div>
+<div style="margin:12px"><button class="btn btn-dark" onclick="resetAll()">↺ تصفير</button></div>
+</div>
+<div class="nav"><button class="active">🏠<br>الرئيسية</button><button onclick="showMsg('ختار لعبة من الفوق والعب')">🎮<br>ألعاب</button><button onclick="showMsg('رصيدك: '+getBal()+' عملة')">💰<br>رصيدي</button></div>
+<script>
+function getBal(){return parseInt(localStorage.getItem('qarib_coins')||'0')}
+function setBal(v){localStorage.setItem('qarib_coins',v);document.getElementById('bal').textContent=v+' عملة';document.getElementById('lvl').textContent='مستوى '+(1+Math.floor(v/100))+' • محفوظ'}
+function showMsg(t){var m=document.getElementById('msg');m.textContent=t;m.style.display='block';setTimeout(function(){m.style.display='none'},2500)}
+function add(n,msg){var b=getBal()+n;setBal(b);showMsg(msg+' • '+b)}
+setBal(getBal());
+function openGame(id){document.querySelectorAll('.gamebox').forEach(e=>e.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:350,behavior:'smooth'})}
+function daily(){var t=new Date().toDateString();if(localStorage.getItem('qarib_daily')===t){showMsg('خذيتي ديال اليوم، رجع غدا');return}localStorage.setItem('qarib_daily',t);add(10,'🎁 +10')}
+var clicks=0,ctime=10,ctimer=null,playing=false;
+function startClick(){clicks=0;ctime=10;playing=true;document.getElementById('g1score').textContent='النقرات: 0 | الوقت: 10';clearInterval(ctimer);ctimer=setInterval(function(){ctime--;document.getElementById('g1score').textContent='النقرات: '+clicks+' | الوقت: '+ctime;if(ctime<=0){clearInterval(ctimer);playing=false;var reward=Math.floor(clicks/2);if(reward>0)add(reward,'🎉 ساليتي! '+clicks+' نقرة = +'+reward);else showMsg('حاول تورك كثر المرة الجاية')}},1000)}
+function clickGame(){if(!playing){showMsg('ورك على "بدا اللعبة" الأول');return}clicks++;document.getElementById('g1score').textContent='النقرات: '+clicks+' | الوقت: '+ctime}
+var secret=Math.floor(Math.random()*20)+1, tries=3;
+function guessGame(){var v=parseInt(document.getElementById('g2input').value);if(!v){showMsg('كتب رقم');return}tries--;if(v===secret){add(15,'✅ صحيح! +15');secret=Math.floor(Math.random()*20)+1;tries=3;document.getElementById('g2left').textContent='المحاولات: 3';document.getElementById('g2hint').textContent='رقم جديد!'}else{ document.getElementById('g2hint').textContent = v<secret ? 'الرقم أكبر ⬆️' : 'الرقم أصغر ⬇️'; document.getElementById('g2left').textContent='المحاولات: '+tries; if(tries<=0){showMsg('ساليو المحاولات، الرقم كان '+secret);secret=Math.floor(Math.random()*20)+1;tries=3;document.getElementById('g2left').textContent='المحاولات: 3'}} document.getElementById('g2input').value=''}
+var ma=0,mb=0,ok=0,notok=0;function newMath(){ma=Math.floor(Math.random()*10)+1;mb=Math.floor(Math.random()*10)+1;document.getElementById('g3q').textContent='شنو هو '+ma+' + '+mb+' ؟'}
+newMath();
+function mathGame(){var v=parseInt(document.getElementById('g3input').value);if(v===ma+mb){ok++;add(5,'✅ صحيح +5');}else{notok++;showMsg('غلط، الجواب '+(ma+mb))}document.getElementById('g3score').textContent='صحيحة: '+ok+' | خاطئة: '+notok;document.getElementById('g3input').value='';newMath()}
+var memVals=[],memFirst=null,memLock=false,memTries=0;
+function initMem(){var vals=['🍓','🍓','🐭','🐭','⭐','⭐','🎨','🎨','🔢','🔢','🎮','🎮','💎','💎','🔥','🔥'];vals.sort(()=>Math.random()-0.5);memVals=vals;memFirst=null;memLock=false;memTries=0;var box=document.getElementById('mem');box.innerHTML='';vals.forEach((v,i)=>{var b=document.createElement('button');b.className='cell';b.textContent='?';b.onclick=function(){if(memLock||b.classList.contains('open'))return;b.textContent=v;b.classList.add('open');if(!memFirst){memFirst=b}else{memTries++;document.getElementById('memscore').textContent='المحاولات: '+memTries;if(memFirst.textContent===b.textContent){var f=memFirst;memFirst=null;if(document.querySelectorAll('.cell.open').length===16){add(20,'🏆 كملتي الذاكرة! +20')}}else{memLock=true;var f=memFirst;memFirst=null;setTimeout(function(){f.textContent='?';b.textContent='?';f.classList.remove('open');b.classList.remove('open');memLock=false},700)}}}});box.appendChild(b)});document.getElementById('memscore').textContent='المحاولات: 0'}
+initMem();
+function resetAll(){if(confirm('تصفّر؟')){localStorage.removeItem('qarib_coins');localStorage.removeItem('qarib_daily');setBal(0);showMsg('تصفّر')}}
+</script></body></html>
